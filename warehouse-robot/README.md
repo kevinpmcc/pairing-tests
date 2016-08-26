@@ -27,6 +27,12 @@ If the robot starts in the south-west corner of the warehouse then the following
 
 * Create a way to send a series of commands to the robot
 * Make sure that the robot doesn't try to move outside the warehouse
+first step would be to create a function that would take in steps in one line,
+separate them and then send them back as individual commands. 
+
+next step simplest way of making sure that the robot doesn't move off the grid.
+starting point is 0, 0.
+if it hits 10 or -10 on either then its off the grid.
 
 ## Part two
 
