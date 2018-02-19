@@ -1,19 +1,25 @@
 const FruitMachine = require('./FruitMachine')
 
 class Person {
-	constructor(machine=FruitMachine) {
-		this.fm = new machine()
-		this.balance = 100
+	constructor(Machine=FruitMachine, balance=100) {
+		this.Machine = Machine;
+		this.fm = new Machine();
+		this.balance = balance;
 	}
 
 	play() {
-		if (this.balance < 10) { throw 'you don\'t have enough money!' }
-		let play = 10
-		this.balance -= play
+		let pricePerPlay = this.Machine.pricePerPlay()
+		if (this.balance < pricePerPlay) { return 'you don\'t have enough money!' }
+		this.deductFromBalance(pricePerPlay)
 		let results = this.fm.play()
-		this.balance += results.winnings
-		console.log(results)
-		console.log(this.balance) 
+		if (results.winnings > 0) this.addToBalance(results.winnings)
+		return results
+	}
+	deductFromBalance(amount){
+		this.balance -= amount;
+	}
+	addToBalance(amount){
+		this.balance += amount;
 	}
 }
 

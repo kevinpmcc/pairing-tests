@@ -3,10 +3,10 @@ class FruitMachine {
 	constructor() {
 		this.jackpot = 0;
 	}
-
+	
 	play() {
-		this.increaseJackpot(10);
-		let slots = FruitMachine.spin()
+		this.increaseJackpot(FruitMachine.pricePerPlay());
+		let slots = FruitMachine.slots()
 		return { winnings: this.calculateWinnings(slots, this.jackpot),
 				slots: slots, currentJackpot: this.jackpot }
 	}
@@ -23,7 +23,7 @@ class FruitMachine {
 		return ['black', 'white', 'yellow', 'green']
 	}
 
-	static spin() {
+	static slots() {
 		return [FruitMachine.randomColour(),FruitMachine.randomColour(),FruitMachine.randomColour(),FruitMachine.randomColour()]
 	}
 
@@ -37,6 +37,10 @@ class FruitMachine {
 		return array.every(function(element) {
         	return element === first;
     	});
+	}
+
+	static pricePerPlay() {
+		return 10;
 	}
 
 	calculateWinnings(slots, jackpot){
