@@ -50,6 +50,29 @@ test('placeOrder returns expected for second order', () => {
   expect(shack.placeOrder()).toBe('estimated wait: 6:00')
 })
 
+test('if max order wait time is given, reject orders placed where wait time is over the time', () => {
+  let maxWaitTime = 5
+  let shack = new app.snackShack(maxWaitTime)
+
+  shack.placeOrder()
+  shack.placeOrder()
+  shack.placeOrder()
+
+  expect(shack.placeOrder()).toBe('sorry, we cannot take your order as it would take too long')
+})
+
+test('if orders are above inventory, reject orders', () => {
+  let shack = new app.snackShack()
+
+  for (var i = 0; i < 46; i++) {
+    shack.placeOrder()
+  }
+
+  expect(shack.placeOrder()).toBe('sorry, we cannot take your order as we have no more stock')
+})
+
+
+
 test('turnSecondsToMinutesAndSeconds when given 90 returns 1:30', () => {
   expect(app.turnSecondsToMinutesAndSeconds(90)).toBe('1:30')
 })

@@ -1,12 +1,21 @@
 class snackShack {
 
-  constructor() {
+  constructor(maxWaitTime) {
+    this.maxWaitTime = maxWaitTime
     this.numberOfOrders = 0
-  }
+    this.inventoryOfSandwiches = 45
+ }
 
   placeOrder() {
+    if (this.aboveMaxWaitTime()) return 'sorry, we cannot take your order as it would take too long'
+    if ((this.numberOfOrders + 1) > this.inventoryOfSandwiches) return 'sorry, we cannot take your order as we have no more stock'
     this.numberOfOrders++   
     return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(this.numberOfOrders * 90)
+  }
+
+  aboveMaxWaitTime() {
+    if (this.maxWaitTime == 'undefined') return false
+    return ((this.numberOfOrders + 1) * 90) > this.maxWaitTime
   }
 
   getSchedule() {
