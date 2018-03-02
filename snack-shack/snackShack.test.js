@@ -14,8 +14,20 @@ test('it returns the correct schedule when two orders are placed', () => {
   shack.placeOrder()
   shack.placeOrder()
   
-  expect(shack.getSchedule()).toBe('1. 0:00 2 sandwich orders placed, start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 start making sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 take a well earned break!')
+  expect(shack.getSchedule()).toBe('1. 0:00 2 sandwich orders placed, start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 take a well earned break!')
 })
+
+test('it returns the correct schedule when four orders are placed', () => {
+  let shack = new snackShack()
+
+  shack.placeOrder()
+  shack.placeOrder()
+  shack.placeOrder()
+  shack.placeOrder()
+  
+  expect(shack.getSchedule()).toBe('1. 0:00 4 sandwich orders placed, start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 make sandwich 3\n6. 4:00 serve sandwich 3\n7. 4:30 make sandwich 4\n8. 5:30 serve sandwich 4\n9. 6:00 take a well earned break!')
+})
+
 
 test('turnSecondsToMinutesAndSeconds when given 90 returns 1:30', () => {
   expect(snackShack.turnSecondsToMinutesAndSeconds(90)).toBe('1:30')

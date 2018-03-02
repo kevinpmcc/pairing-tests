@@ -19,9 +19,9 @@ class snackShack {
   additionalLines(){
     if(this.numberOfOrders <= 1) return '\n'
     let returnLines = ''
-    let currentTime = 90
     for (var i = 1; i < this.numberOfOrders; i++) {
-      returnLines += '\n' + (i + 2).toString() + '. ' + snackShack.turnSecondsToMinutesAndSeconds(currentTime) + ' start making sandwich ' + (i + 1).toString() + '\n' + (i + 3).toString() + '. ' + snackShack.turnSecondsToMinutesAndSeconds(currentTime + 60) + ' serve sandwich ' + (i + 1).toString() 
+      let currentTime = i * 90
+      returnLines += '\n' + ((i * 2) + 1).toString() + '. ' + snackShack.turnSecondsToMinutesAndSeconds(currentTime) + ' make sandwich ' + (i + 1).toString() + '\n' + ((i * 2) + 2).toString() + '. ' + snackShack.turnSecondsToMinutesAndSeconds(currentTime + 60) + ' serve sandwich ' + (i + 1).toString() 
     }
     return returnLines += '\n'
   } 
