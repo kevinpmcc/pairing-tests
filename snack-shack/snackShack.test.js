@@ -5,7 +5,7 @@ test('it returns the correct schedule when one order is place', () => {
 
   shack.placeOrder()
   
-  expect(shack.getSchedule()).toBe('1. 0:00 1 sandwich orders placed, start making sandwich 1\n2. 0:60 serve sandwich 1')
+  expect(shack.getSchedule()).toBe('1. 0:00 1 sandwich orders placed, start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 take a well earned break!')
 })
 
 test('it returns the correct schedule when two orders are placed', () => {
@@ -14,7 +14,7 @@ test('it returns the correct schedule when two orders are placed', () => {
   shack.placeOrder()
   shack.placeOrder()
   
-  expect(shack.getSchedule()).toBe('1. 0:00 2 sandwich orders placed, start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 start make sandwich 2\n4. 2:30 serve sandwich 2')
+  expect(shack.getSchedule()).toBe('1. 0:00 2 sandwich orders placed, start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 start make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 take a well earned break!')
 })
 
 
