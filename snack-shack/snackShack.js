@@ -6,6 +6,7 @@ class snackShack {
 
   placeOrder() {
     this.numberOfOrders++   
+    return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(this.numberOfOrders * 90)
   }
 
   getSchedule() {
