@@ -21,21 +21,22 @@ class snackShack {
     let returnLines = ''
     for (var i = 1; i < this.numberOfOrders; i++) {
       let currentTime = i * 90
-      returnLines += '\n' + ((i * 2) + 1).toString() + '. ' + snackShack.turnSecondsToMinutesAndSeconds(currentTime) + ' make sandwich ' + (i + 1).toString() + '\n' + ((i * 2) + 2).toString() + '. ' + snackShack.turnSecondsToMinutesAndSeconds(currentTime + 60) + ' serve sandwich ' + (i + 1).toString() 
+      returnLines += '\n' + ((i * 2) + 1).toString() + '. ' + turnSecondsToMinutesAndSeconds(currentTime) + ' make sandwich ' + (i + 1).toString() + '\n' + ((i * 2) + 2).toString() + '. ' + turnSecondsToMinutesAndSeconds(currentTime + 60) + ' serve sandwich ' + (i + 1).toString() 
     }
     return returnLines += '\n'
   } 
 	
   finalLine(){
-    return ((this.numberOfOrders * 2) + 1).toString() + '. ' + snackShack.turnSecondsToMinutesAndSeconds(this.numberOfOrders * 90) + ' take a well earned break!'
-  }
-
-  static turnSecondsToMinutesAndSeconds(totalSeconds) {
-    let minutes = Math.floor(totalSeconds / 60).toString()  
-    let seconds = (totalSeconds % 60).toString()
-    if (seconds.length === 1) seconds = '0' + seconds
-    return minutes + ':' + seconds
+    return ((this.numberOfOrders * 2) + 1).toString() + '. ' + turnSecondsToMinutesAndSeconds(this.numberOfOrders * 90) + ' take a well earned break!'
   }
 }
 
-module.exports = snackShack
+function turnSecondsToMinutesAndSeconds(totalSeconds) {
+  let minutes = Math.floor(totalSeconds / 60).toString()  
+  let seconds = (totalSeconds % 60).toString()
+  if (seconds.length === 1) seconds = '0' + seconds
+  return minutes + ':' + seconds
+}
+
+module.exports = { snackShack: snackShack,
+                   turnSecondsToMinutesAndSeconds: turnSecondsToMinutesAndSeconds}
