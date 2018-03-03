@@ -4,7 +4,7 @@
   "description": "Hello, the competitive world of software engineering has gotten to me and I have decided to enter the world of fast food!",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --watch"
   },
   "author": "",
   "license": "ISC",
