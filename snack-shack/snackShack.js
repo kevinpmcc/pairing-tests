@@ -1,41 +1,43 @@
-class snackShack {
+class SnackShack {
 
   constructor(maxWaitTime) {
     this.maxWaitTime = maxWaitTime
-    this.orders = []
     this.inventoryOfSandwiches = 45
     this.nextStartTime = 0
     this.numberOfSandwichesOrdered = 0
     this.steps = []
- }
+  }
 
   placeOrder(foodType='sandwich') {
-    let self = this
     let latestOrder
     if (foodType === 'sandwich') {
       latestOrder = new Sandwich(foodType, this.nextStartTime)
-      if (this.aboveMaxWaitTime(latestOrder)) return 'sorry, we cannot take your order as it would take too long'
-      if (this.numberOfSandwichesOrdered + 1 > this.inventoryOfSandwiches) return 'sorry, we cannot take your order as we have no more stock'
+      if (this.unableToAcceptOrder(latestOrder)) return this.unableToAcceptOrder(latestOrder) 
       this.numberOfSandwichesOrdered += 1
       latestOrder.addSandwichNumber(this.numberOfSandwichesOrdered)
     }
-    if (foodType === 'jacketPotato'){
+    if (foodType === 'jacket potato'){
       latestOrder = new JacketPotato(foodType, this.nextStartTime)
     }
-    this.orders.push(latestOrder)
     this.nextStartTime = latestOrder.freeForOtherThingsTime()
-    latestOrder.steps().map( step => self.steps.push(step))
+    latestOrder.steps().map( step => this.steps.push(step))
     return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(latestOrder.completedTime())
-  }
-
-  aboveMaxWaitTime(order) {
-    if (this.maxWaitTime === 'undefined') return false
-    return ((order.completedTime() > this.maxWaitTime))
   }
 
   getSchedule(){
     let schedule = new ScheduleMaker(this.steps)
     return schedule.getSchedule()
+  }
+
+  unableToAcceptOrder(latestOrder){
+    if (this.aboveMaxWaitTime(latestOrder)) return 'sorry, we cannot take your order as it would take too long'
+    if (this.numberOfSandwichesOrdered + 1 > this.inventoryOfSandwiches) return 'sorry, we cannot take your order as we have no more stock'
+    return false
+  } 
+
+  aboveMaxWaitTime(order) {
+    if (this.maxWaitTime === 'undefined') return false
+    return ((order.completedTime() > this.maxWaitTime))
   }
 }
  
@@ -46,7 +48,42 @@ class ScheduleMaker {
   }
 
   getSchedule() {
-    return this.additionalLines() + this.finalLine()
+    return this.standardLines() + this.finalLine()
+  }
+
+  standardLines() {
+    let returnLines = ''
+    let sortedSteps = sortArrayByKey(this.steps, 'startTime')
+    for (var i = 0; i < this.steps.length; i++) {
+      let currentStep = sortedSteps[i]
+      if (i !== 0) returnLines += '\n'
+      switch (currentStep.step) {
+        case 'makeSandwich':
+          returnLines += this.makeLine(currentStep.order)
+          break
+        case 'serveSandwich': 
+          returnLines +=  this.serveSandwichLine(currentStep.order) 
+          break
+        case 'putInMicrowave':
+          returnLines += this.putInMicrowaveLine(currentStep.order)
+          break
+        case 'takeOutOfMicrowave':
+          returnLines += this.takeOutOfMicrowaveLine(currentStep.order)
+          break
+        case 'topPotato':
+          returnLines += this.topPotatoLine(currentStep.order)
+          break
+        case 'servePotato':
+          returnLines += this.servePotatoLine(currentStep.order)
+        } 
+    }
+    return returnLines += '\n'
+  } 
+
+  finalLine(){
+    let lineNumber = this.getCurrentLine()
+    let previousStep = sortArrayByKey(this.steps, 'startTime')[this.steps.length - 1]
+    return lineNumber + '. ' + turnSecondsToMinutesAndSeconds(previousStep.order.completedTime()) + ' take a break!'
   }
 
   getCurrentLine() {
@@ -59,9 +96,8 @@ class ScheduleMaker {
     return lineNumber
   }
 
-
-  makeSandwichLine(currentOrder) {
-    return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.makeTime()) + ' make sandwich ' + (currentOrder.sandwichNumber).toString()
+  makeLine(currentOrder) {
+    return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.makeTime()) + ' make ' + currentOrder.foodType + ' ' + (currentOrder.sandwichNumber).toString()
   }
 
   serveSandwichLine(currentOrder) {
@@ -69,11 +105,11 @@ class ScheduleMaker {
   }
 
   putInMicrowaveLine(currentOrder) {
-    return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.putInMicrowaveTime()) + ' Put jacket potato in microwave'
+    return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.putInMicrowaveTime()) + ' Put ' + currentOrder.foodType + ' in microwave'
   }
   
   takeOutOfMicrowaveLine(currentOrder) {
-    return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.takeOutOfMicrowaveTime()) + ' take jacket potato out of microwave'
+    return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.takeOutOfMicrowaveTime()) + ' take ' + currentOrder.foodType + ' out of microwave'
   }
 
   topPotatoLine(currentOrder) {
@@ -84,37 +120,9 @@ class ScheduleMaker {
     return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.serveTime()) + ' serve jacket potato'
   }
 
-  additionalLines() {
-    let returnLines = ''
-    let sortedSteps = sortArrayByKey(this.steps, 'startTime')
-    for (var i = 0; i < this.steps.length; i++) {
-      let currentStep = sortedSteps[i]
-      if ((currentStep.step === 'makeSandwich') && (i === 0)) { 
-        returnLines += '1. 0:00 start making sandwich 1'
-        this.currentLine += 1
-      }
-      if (currentStep.step === 'makeSandwich' && i > 0) returnLines += '\n' + this.makeSandwichLine(currentStep.order)
-      if (currentStep.step === 'serveSandwich') returnLines +=  '\n' + this.serveSandwichLine(currentStep.order) 
-      if (currentStep.step === 'putInMicrowave' && (i === 0)) {
-        returnLines += '1. 0:00 Put jacket potato in microwave'
-        this.currentLine += 1
-      }
-      if (currentStep.step === 'putInMicrowave' && (i > 0)) returnLines += this.putInMicrowaveLine(currentStep.order)
-      if (currentStep.step === 'takeOutOfMicrowave') returnLines += '\n' + this.takeOutOfMicrowaveLine(currentStep.order)
-      if (currentStep.step === 'topPotato') returnLines += '\n' + this.topPotatoLine(currentStep.order)
-      if (currentStep.step === 'servePotato') returnLines += '\n' + this.servePotatoLine(currentStep.order)
-
-    }
-    return returnLines += '\n'
-  } 
-
-  finalLine(){
-    let lineNumber = this.getCurrentLine()
-    let previousStep = sortArrayByKey(this.steps, 'startTime')[this.steps.length - 1]
-    return lineNumber + '. ' + turnSecondsToMinutesAndSeconds(previousStep.startTime + 30) + ' take a break!'
-  }
 }
   
+
 
 class Sandwich {
 
@@ -225,5 +233,5 @@ var sortArrayByKey = (function() {
   };
 })();
 
-module.exports = { snackShack: snackShack,
+module.exports = { SnackShack: SnackShack,
                    turnSecondsToMinutesAndSeconds: turnSecondsToMinutesAndSeconds}

@@ -1,41 +1,41 @@
 const app = require('./snackShack')
 
 test('it returns the correct schedule when one order is place', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
 
   shack.placeOrder()
   
-  expect(shack.getSchedule()).toBe('1. 0:00 start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 take a break!')
+  expect(shack.getSchedule()).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 take a break!')
 })
 
 test('it returns the correct schedule when two orders are placed', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
 
   shack.placeOrder()
   shack.placeOrder()
   
-  expect(shack.getSchedule()).toBe('1. 0:00 start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 take a break!')
+  expect(shack.getSchedule()).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 take a break!')
 })
 
 test('it returns the correct schedule when four orders are placed', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
 
   shack.placeOrder()
   shack.placeOrder()
   shack.placeOrder()
   shack.placeOrder()
   
-  expect(shack.getSchedule()).toBe('1. 0:00 start making sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 make sandwich 3\n6. 4:00 serve sandwich 3\n7. 4:30 make sandwich 4\n8. 5:30 serve sandwich 4\n9. 6:00 take a break!')
+  expect(shack.getSchedule()).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 make sandwich 3\n6. 4:00 serve sandwich 3\n7. 4:30 make sandwich 4\n8. 5:30 serve sandwich 4\n9. 6:00 take a break!')
 })
 
 test('placeOrder returns expected wait time for first order', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
 
   expect(shack.placeOrder()).toBe('estimated wait: 1:30')
 })
 
 test('placeOrder returns expected for second order', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
   
   shack.placeOrder()
 
@@ -43,7 +43,7 @@ test('placeOrder returns expected for second order', () => {
 })
 
 test('placeOrder returns expected for second order', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
   
   shack.placeOrder()
   shack.placeOrder()
@@ -53,14 +53,14 @@ test('placeOrder returns expected for second order', () => {
 })
 
 test('placeOrder returns expected for jacket potato order', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
 
-  expect(shack.placeOrder('jacketPotato')).toBe('estimated wait: 4:31')
+  expect(shack.placeOrder('jacket potato')).toBe('estimated wait: 4:31')
 })
 
 test('if max order wait time is given, reject orders placed where wait time is over the time', () => {
   let maxWaitTime = 5
-  let shack = new app.snackShack(maxWaitTime)
+  let shack = new app.SnackShack(maxWaitTime)
 
   shack.placeOrder()
   shack.placeOrder()
@@ -70,7 +70,7 @@ test('if max order wait time is given, reject orders placed where wait time is o
 })
 
 test('if orders are above inventory, reject orders', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
 
   for (var i = 0; i < 46; i++) {
     shack.placeOrder()
@@ -80,9 +80,9 @@ test('if orders are above inventory, reject orders', () => {
 })
 
 test('can serve jacket potatoes as well as sandwiches', () => {
-  let shack = new app.snackShack()
+  let shack = new app.SnackShack()
 
-  shack.placeOrder('jacketPotato')
+  shack.placeOrder('jacket potato')
   shack.placeOrder('sandwich')
   shack.placeOrder('sandwich')
 
