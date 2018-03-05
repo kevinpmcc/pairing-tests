@@ -6,33 +6,26 @@ class snackShack {
     this.inventoryOfSandwiches = 45
     this.nextStartTime = 0
     this.numberOfSandwichesOrdered = 0
-    this.currentLine = 1
     this.steps = []
  }
 
   placeOrder(foodType='sandwich') {
+    let self = this
+    let latestOrder
     if (foodType === 'sandwich') {
-      let latestOrder = new Sandwich(foodType, this.nextStartTime)
+      latestOrder = new Sandwich(foodType, this.nextStartTime)
       if (this.aboveMaxWaitTime(latestOrder)) return 'sorry, we cannot take your order as it would take too long'
       if (this.numberOfSandwichesOrdered + 1 > this.inventoryOfSandwiches) return 'sorry, we cannot take your order as we have no more stock'
       this.numberOfSandwichesOrdered += 1
       latestOrder.addSandwichNumber(this.numberOfSandwichesOrdered)
-      this.orders.push(latestOrder) 
-      this.steps.push({ order: latestOrder, step: 'makeSandwich', startTime: latestOrder.makeTime() })
-      this.steps.push({ order: latestOrder, step: 'serveSandwich', startTime: latestOrder.serveTime() })
-      this.nextStartTime = latestOrder.completedTime()
-      return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(latestOrder.completedTime())
     }
     if (foodType === 'jacketPotato'){
-      let latestOrder = new JacketPotato(foodType, this.nextStartTime)
-      this.orders.push(latestOrder)
-      this.steps.push({ order: latestOrder, step: 'putInMicrowave', startTime: latestOrder.putInMicrowaveTime() })
-      this.steps.push({ order: latestOrder, step: 'takeOutOfMicrowave', startTime: latestOrder.takeOutOfMicrowaveTime() })
-      this.steps.push({ order: latestOrder, step: 'topPotato', startTime: latestOrder.toppingTime() })
-      this.steps.push({ order: latestOrder, step: 'servePotato', startTime: latestOrder.serveTime() })
-      this.nextStartTime = latestOrder.freeForOtherThingsTime()
-      return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(latestOrder.completedTime())
+      latestOrder = new JacketPotato(foodType, this.nextStartTime)
     }
+    this.orders.push(latestOrder)
+    this.nextStartTime = latestOrder.freeForOtherThingsTime()
+    latestOrder.steps().map( step => self.steps.push(step))
+    return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(latestOrder.completedTime())
   }
 
   aboveMaxWaitTime(order) {
@@ -40,10 +33,21 @@ class snackShack {
     return ((order.completedTime() > this.maxWaitTime))
   }
 
+  getSchedule(){
+    let schedule = new ScheduleMaker(this.steps)
+    return schedule.getSchedule()
+  }
+}
+ 
+class ScheduleMaker {
+  constructor(steps) {
+    this.currentLine = 1
+    this.steps = steps
+  }
+
   getSchedule() {
     return this.additionalLines() + this.finalLine()
   }
-
 
   getCurrentLine() {
     return this.currentLine.toString()
@@ -60,7 +64,7 @@ class snackShack {
     return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.makeTime()) + ' make sandwich ' + (currentOrder.sandwichNumber).toString()
   }
 
- serveSandwichLine(currentOrder) {
+  serveSandwichLine(currentOrder) {
     return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.serveTime()) + ' serve sandwich ' + (currentOrder.sandwichNumber).toString() 
   }
 
@@ -69,7 +73,6 @@ class snackShack {
   }
   
   takeOutOfMicrowaveLine(currentOrder) {
-    console.log('called')
     return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.takeOutOfMicrowaveTime()) + ' take jacket potato out of microwave'
   }
 
@@ -80,8 +83,6 @@ class snackShack {
   servePotatoLine(currentOrder) {
     return this.newLine() + '. ' + turnSecondsToMinutesAndSeconds(currentOrder.serveTime()) + ' serve jacket potato'
   }
-
-
 
   additionalLines() {
     let returnLines = ''
@@ -113,6 +114,7 @@ class snackShack {
     return lineNumber + '. ' + turnSecondsToMinutesAndSeconds(previousStep.startTime + 30) + ' take a break!'
   }
 }
+  
 
 class Sandwich {
 
@@ -122,19 +124,29 @@ class Sandwich {
     this.sandwichNumber
   }
 
+  steps(){
+    return [{ order: this, step: 'makeSandwich', startTime: this.makeTime() },
+            { order: this, step: 'serveSandwich', startTime: this.serveTime() }]
+  }
+
   addSandwichNumber(number){
     this.sandwichNumber = number
   }
-
   
   makeTime(){
     return this.startTime
   }
 
+  freeForOtherThingsTime() {
+    return this.startTime + 90
+  }
+
+
   serveTime(){
     return this.startTime + 60
   }
 
+ 
   completedTime(){
     return this.startTime + 90
   }
@@ -144,6 +156,13 @@ class JacketPotato {
   constructor(foodType, startTime) {
     this.foodType = foodType
     this.startTime = startTime
+  }
+
+  steps(){
+    return [  { order: this, step: 'putInMicrowave', startTime: this.putInMicrowaveTime() },
+              { order: this, step: 'takeOutOfMicrowave', startTime: this.takeOutOfMicrowaveTime() },
+              { order: this, step: 'topPotato', startTime: this.toppingTime() },
+              { order: this, step: 'servePotato', startTime: this.serveTime() }]
   }
 
   putInMicrowaveTime() {
