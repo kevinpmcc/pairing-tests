@@ -10,28 +10,13 @@ class SnackShack {
 
   placeOrder(foodType='sandwich') {
     let latestOrder
-    // if (foodType === 'sandwich') {
     latestOrder = new Order(foodType, this.nextStartTime)
-      // if (this.unableToAcceptOrder(latestOrder)) return this.unableToAcceptOrder(latestOrder) 
     this.numberOfSandwichesOrdered += 1
     latestOrder.addNumber(this.numberOfSandwichesOrdered)
-  
-    // }
-    // if (foodType === 'jacket potato'){
-    //   latestOrder = new JacketPotato(foodType, this.nextStartTime)
-    // }
-    let steps = FoodTimings.filter(food => food.foodType = foodType)[0].steps
-
-    let timeWhenAvailable = steps.filter(({blocking}) => blocking) 
-                                  .reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
-    
-    let totalTime = steps.reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
-    let serveTime = this.nextStartTime += totalTime
-    this.nextStartime += timeWhenAvailable
+    let serveTime = this.nextStartTime += timeTillComplete(foodTimings, foodType)
+    this.nextStartime += timeTillNextAvailable(foodTimings, foodType)
     let total = 0
-   
-    console.log(total)
-    // latestOrder.steps().map( step => this.steps.push(step))
+       // latestOrder.steps().map( step => this.steps.push(step))
     return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(serveTime)
   }
 
@@ -144,16 +129,40 @@ class Order {
   }
 }
 
-const FoodTimings = [{
+
+const foodTimings = [{
     foodType: 'sandwich',
     steps: [{ name: 'make', duration: 60, blocking: true },
             { name: 'serve', duration: 30, blocking: true }]
   },
   {
     foodType: 'jacket potato',
-    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true},
-            { name: 'cook', duration: 180, blocking: false}  ]
-  }]
+    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true },
+            { name: 'cook', duration: 180, blocking: false },
+            { name: 'takeOutOfMicrowave', duration: 30, blocking: true },                        
+            { name: 'top', duration: 30, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]            
+}]
+
+
+function timeTillNextAvailable(timings, foodType) {
+  let newArray = []
+  for (var step of filterByFood(timings, foodType)) {
+    if (!step.blocking) break
+    newArray.push(step)    
+  }
+  return newArray.reduce((a, b) => ({ duration: a.duration + b.duration })).duration
+}
+
+function timeTillComplete(timings, foodType) {
+  return filterByFood(timings, foodType)
+         .reduce((a, b) => ({ duration: a.duration + b.duration })).duration
+}
+
+function filterByFood(timings, foodType) {
+  return timings.filter(food => food.foodType === foodType)[0].steps
+}
+
 
 class Sandwich {
 
@@ -266,4 +275,6 @@ var sortArrayByKey = (function() {
 })();
 
 module.exports = { SnackShack: SnackShack,
+                   timeTillNextAvailable: timeTillNextAvailable,
+                   timeTillComplete: timeTillComplete,
                    turnSecondsToMinutesAndSeconds: turnSecondsToMinutesAndSeconds}
