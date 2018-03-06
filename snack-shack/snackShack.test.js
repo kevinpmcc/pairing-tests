@@ -34,7 +34,7 @@ test('placeOrder returns expected wait time for first order', () => {
   expect(shack.placeOrder()).toBe('estimated wait: 1:30')
 })
 
-test('placeOrder returns expected for second order', () => {
+test.only('placeOrder returns expected for second order', () => {
   let shack = new app.SnackShack()
   
   shack.placeOrder()
@@ -44,7 +44,7 @@ test('placeOrder returns expected for second order', () => {
 
 test('placeOrder returns expected for second order', () => {
   let shack = new app.SnackShack()
-  
+
   shack.placeOrder()
   shack.placeOrder()
   shack.placeOrder()

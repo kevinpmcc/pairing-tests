@@ -10,18 +10,29 @@ class SnackShack {
 
   placeOrder(foodType='sandwich') {
     let latestOrder
-    if (foodType === 'sandwich') {
-      latestOrder = new Sandwich(foodType, this.nextStartTime)
-      if (this.unableToAcceptOrder(latestOrder)) return this.unableToAcceptOrder(latestOrder) 
-      this.numberOfSandwichesOrdered += 1
-      latestOrder.addSandwichNumber(this.numberOfSandwichesOrdered)
-    }
-    if (foodType === 'jacket potato'){
-      latestOrder = new JacketPotato(foodType, this.nextStartTime)
-    }
-    this.nextStartTime = latestOrder.freeForOtherThingsTime()
-    latestOrder.steps().map( step => this.steps.push(step))
-    return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(latestOrder.completedTime())
+    // if (foodType === 'sandwich') {
+    latestOrder = new Order(foodType, this.nextStartTime)
+      // if (this.unableToAcceptOrder(latestOrder)) return this.unableToAcceptOrder(latestOrder) 
+    this.numberOfSandwichesOrdered += 1
+    latestOrder.addNumber(this.numberOfSandwichesOrdered)
+  
+    // }
+    // if (foodType === 'jacket potato'){
+    //   latestOrder = new JacketPotato(foodType, this.nextStartTime)
+    // }
+    let steps = FoodTimings.filter(food => food.foodType = foodType)[0].steps
+
+    let timeWhenAvailable = steps.filter(({blocking}) => blocking) 
+                                  .reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
+    
+    let totalTime = steps.reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
+    let serveTime = this.nextStartTime += totalTime
+    this.nextStartime += timeWhenAvailable
+    let total = 0
+   
+    console.log(total)
+    // latestOrder.steps().map( step => this.steps.push(step))
+    return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(serveTime)
   }
 
   getSchedule(){
@@ -122,7 +133,27 @@ class ScheduleMaker {
 
 }
   
+class Order {
+  constructor(foodType, startTime){
+    this.foodType = foodType
+    this.startTime = startTime
+    this.number
+  }
+  addNumber(number){
+    this.number = number
+  }
+}
 
+const FoodTimings = [{
+    foodType: 'sandwich',
+    steps: [{ name: 'make', duration: 60, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]
+  },
+  {
+    foodType: 'jacket potato',
+    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true},
+            { name: 'cook', duration: 180, blocking: false}  ]
+  }]
 
 class Sandwich {
 
@@ -132,33 +163,34 @@ class Sandwich {
     this.sandwichNumber
   }
 
-  steps(){
-    return [{ order: this, step: 'makeSandwich', startTime: this.makeTime() },
-            { order: this, step: 'serveSandwich', startTime: this.serveTime() }]
-  }
+  // steps(){
+  //   return [{ order: this, step: 'makeSandwich', startTime: this.makeTime() },
+  //           { order: this, step: 'serveSandwich', startTime: this.serveTime() }]
+  // }
 
-  addSandwichNumber(number){
-    this.sandwichNumber = number
-  }
+  // addSandwichNumber(number){
+  //   this.sandwichNumber = number
+  // }
   
-  makeTime(){
-    return this.startTime
-  }
+  // makeTime(){
+  //   return this.startTime
+  // }
 
-  freeForOtherThingsTime() {
-    return this.startTime + 90
-  }
+  // freeForOtherThingsTime() {
+  //   return this.startTime + 90
+  // }
 
 
-  serveTime(){
-    return this.startTime + 60
-  }
+  // serveTime(){
+  //   return this.startTime + 60
+  // }
 
  
-  completedTime(){
-    return this.startTime + 90
-  }
+  // completedTime(){
+  //   return this.startTime + 90
+  // }
 }
+
 
 class JacketPotato {
   constructor(foodType, startTime) {
