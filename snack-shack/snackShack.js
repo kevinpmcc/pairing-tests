@@ -11,9 +11,7 @@ class SnackShack {
 
   placeOrder(foodType='sandwich') {
     let latestOrder
-    // if (foodType === 'sandwich') {
     latestOrder = new Order(foodType, this.nextStartTime)
-      // if (this.unableToAcceptOrder(latestOrder)) return this.unableToAcceptOrder(latestOrder) 
     this.numberOfSandwichesOrdered += 1
     latestOrder.addNumber(this.numberOfSandwichesOrdered)
   
@@ -191,9 +189,32 @@ const FOOD_TIMINGS = [{
   },
   {
     foodType: 'jacket potato',
-    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true},
-            { name: 'cook', duration: 180, blocking: false}  ]
-  }]
+    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true },
+            { name: 'cook', duration: 180, blocking: false },
+            { name: 'takeOutOfMicrowave', duration: 30, blocking: true },                        
+            { name: 'top', duration: 30, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]            
+}]
+
+
+function timeTillNextAvailable(timings, foodType) {
+  let newArray = []
+  for (var step of filterByFood(timings, foodType)) {
+    if (!step.blocking) break
+    newArray.push(step)    
+  }
+  return newArray.reduce((a, b) => ({ duration: a.duration + b.duration })).duration
+}
+
+function timeTillComplete(timings, foodType) {
+  return filterByFood(timings, foodType)
+         .reduce((a, b) => ({ duration: a.duration + b.duration })).duration
+}
+
+function filterByFood(timings, foodType) {
+  return timings.filter(food => food.foodType === foodType)[0].steps
+}
+
 
 // class Sandwich {
 

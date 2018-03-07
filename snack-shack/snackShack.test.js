@@ -61,7 +61,7 @@ test('it returns the correct schedule when four orders are placed', () => {
   expect(shack.getSchedule()).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 make sandwich 3\n6. 4:00 serve sandwich 3\n7. 4:30 make sandwich 4\n8. 5:30 serve sandwich 4\n9. 6:00 take a break!')
 })
 
-test('placeOrder returns expected wait time for first order', () => {
+test.only('placeOrder returns expected wait time for first order', () => {
   let shack = new app.SnackShack()
 
   expect(shack.placeOrder()).toBe('estimated wait: 1:30')
@@ -75,7 +75,7 @@ test.only('placeOrder returns expected for second order', () => {
   expect(shack.placeOrder()).toBe('estimated wait: 3:00')
 })
 
-test('placeOrder returns expected for second order', () => {
+test.only('placeOrder returns expected for second order', () => {
   let shack = new app.SnackShack()
 
   shack.placeOrder()
@@ -85,7 +85,7 @@ test('placeOrder returns expected for second order', () => {
   expect(shack.placeOrder()).toBe('estimated wait: 6:00')
 })
 
-test('placeOrder returns expected for jacket potato order', () => {
+test.only('placeOrder returns expected for jacket potato order', () => {
   let shack = new app.SnackShack()
 
   expect(shack.placeOrder('jacket potato')).toBe('estimated wait: 4:31')
@@ -121,6 +121,99 @@ test('can serve jacket potatoes as well as sandwiches', () => {
 
   expect(shack.getSchedule()).toBe('1. 0:00 Put jacket potato in microwave\n2. 0:01 make sandwich 1\n3. 1:01 serve sandwich 1\n4. 1:31 make sandwich 2\n5. 2:31 serve sandwich 2\n6. 3:01 take jacket potato out of microwave\n7. 3:31 top jacket potato\n8. 4:01 serve jacket potato\n9. 4:31 take a break!')
 })
+
+
+test.only('returns the next available time', () => {
+  let fakeTimings = [{
+    foodType: 'sandwich',
+    steps: [{ name: 'make', duration: 60, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]
+  },
+  {
+    foodType: 'jacket potato',
+    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true },
+            { name: 'cook', duration: 180, blocking: false },
+            { name: 'takeOutOfMicrowave', duration: 30, blocking: true },            
+            { name: 'top', duration: 30, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]            
+            }  ]
+    
+  expect(app.timeTillNextAvailable(fakeTimings, 'sandwich')).toBe(90)
+})
+
+test.only('returns the next available time for jacket potato', () => {
+  let fakeTimings = [{
+    foodType: 'sandwich',
+    steps: [{ name: 'make', duration: 60, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]
+  },
+  {
+    foodType: 'jacket potato',
+    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true },
+            { name: 'cook', duration: 180, blocking: false },
+            { name: 'takeOutOfMicrowave', duration: 30, blocking: true },            
+            { name: 'top', duration: 30, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]            
+            }  ]
+    
+  expect(app.timeTillNextAvailable(fakeTimings, 'jacket potato')).toBe(1)
+})
+
+test.only('returns the next available time for jacket potato when multiple steps', () => {
+  let fakeTimings = [{
+    foodType: 'sandwich',
+    steps: [{ name: 'make', duration: 60, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]
+  },
+  {
+    foodType: 'jacket potato',
+    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true },
+            { name: 'cook', duration: 180, blocking: true },
+            { name: 'takeOutOfMicrowave', duration: 30, blocking: false },            
+            { name: 'top', duration: 30, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]            
+            }  ]
+    
+  expect(app.timeTillNextAvailable(fakeTimings, 'jacket potato')).toBe(181)
+})
+
+test.only('returns the total time for an item', () => {
+  let fakeTimings = [{
+    foodType: 'sandwich',
+    steps: [{ name: 'make', duration: 60, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]
+  },
+  {
+    foodType: 'jacket potato',
+    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true },
+            { name: 'cook', duration: 180, blocking: true },
+            { name: 'takeOutOfMicrowave', duration: 30, blocking: false },            
+            { name: 'top', duration: 30, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]            
+            }  ]
+    
+  expect(app.timeTillComplete(fakeTimings, 'jacket potato')).toBe(271)
+})
+
+test.only('returns the total time for an item', () => {
+  let fakeTimings = [{
+    foodType: 'sandwich',
+    steps: [{ name: 'make', duration: 60, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]
+  },
+  {
+    foodType: 'jacket potato',
+    steps: [{ name: 'putInMicrowave', duration: 1, blocking: true },
+            { name: 'cook', duration: 180, blocking: true },
+            { name: 'takeOutOfMicrowave', duration: 30, blocking: false },            
+            { name: 'top', duration: 30, blocking: true },
+            { name: 'serve', duration: 30, blocking: true }]            
+            }  ]
+    
+  expect(app.timeTillComplete(fakeTimings, 'sandwich')).toBe(90)
+})
+
+
 
 
 
