@@ -6,6 +6,7 @@ class SnackShack {
     this.nextStartTime = 0
     this.numberOfSandwichesOrdered = 0
     this.steps = []
+    this.newSteps = []
   }
 
   placeOrder(foodType='sandwich') {
@@ -20,7 +21,7 @@ class SnackShack {
     // if (foodType === 'jacket potato'){
     //   latestOrder = new JacketPotato(foodType, this.nextStartTime)
     // }
-    let steps = FoodTimings.filter(food => food.foodType = foodType)[0].steps
+    let steps = FOOD_TIMINGS.filter(food => food.foodType = foodType)[0].steps
 
     let timeWhenAvailable = steps.filter(({blocking}) => blocking) 
                                   .reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
@@ -29,10 +30,49 @@ class SnackShack {
     let serveTime = this.nextStartTime += totalTime
     this.nextStartime += timeWhenAvailable
     let total = 0
-   
-    console.log(total)
+    console.log(steps)
     // latestOrder.steps().map( step => this.steps.push(step))
     return 'estimated wait: ' + turnSecondsToMinutesAndSeconds(serveTime)
+  }
+
+  getNewSchedule(steps) {
+    let currentLine = 1
+    let returnLine = ''
+    let organisedSteps = this.makeScheduleWithTimes(steps)
+    console.log(organisedSteps)
+    for (let step of organisedSteps) { 
+      returnLine += currentLine + '. '
+      returnLine += turnSecondsToMinutesAndSeconds(step.startTime)
+      returnLine += ' '
+      returnLine += step.name + ' ' + step.order.foodType
+      returnLine += '\n'
+      currentLine += 1
+    }
+
+
+    returnLine += currentLine += '. ' + turnSecondsToMinutesAndSeconds(organisedSteps[organisedSteps.length - 1].startTime + organisedSteps[organisedSteps.length - 1].duration) + ' take a break!'
+    return returnLine
+  }
+
+  lastLine(steps) {
+
+  }
+
+
+  makeScheduleWithTimes(steps) {
+    return steps.map((step, index) => { 
+      if (index === 0) step.startTime = 0
+      if (index === 1) step.startTime = steps[index - 1].duration
+      if (index > 1) step.startTime = this.timeOfAllPreviousSteps(steps, index)
+      return step
+    })
+  }
+
+  timeOfAllPreviousSteps(steps, currentIndex) {
+    let newArray = steps.slice(0, currentIndex)
+    if (currentIndex === 2) console.log(newArray, 'newArray')
+    let returnResult = newArray.reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
+    return returnResult
   }
 
   getSchedule(){
@@ -144,7 +184,7 @@ class Order {
   }
 }
 
-const FoodTimings = [{
+const FOOD_TIMINGS = [{
     foodType: 'sandwich',
     steps: [{ name: 'make', duration: 60, blocking: true },
             { name: 'serve', duration: 30, blocking: true }]
@@ -155,13 +195,13 @@ const FoodTimings = [{
             { name: 'cook', duration: 180, blocking: false}  ]
   }]
 
-class Sandwich {
+// class Sandwich {
 
-  constructor(foodType, startTime) {
-    this.foodType = foodType
-    this.startTime = startTime
-    this.sandwichNumber
-  }
+//   constructor(foodType, startTime) {
+//     this.foodType = foodType
+//     this.startTime = startTime
+//     this.sandwichNumber
+//   }
 
   // steps(){
   //   return [{ order: this, step: 'makeSandwich', startTime: this.makeTime() },
@@ -189,46 +229,46 @@ class Sandwich {
   // completedTime(){
   //   return this.startTime + 90
   // }
-}
+// }
 
 
-class JacketPotato {
-  constructor(foodType, startTime) {
-    this.foodType = foodType
-    this.startTime = startTime
-  }
+// class JacketPotato {
+//   constructor(foodType, startTime) {
+//     this.foodType = foodType
+//     this.startTime = startTime
+//   }
 
-  steps(){
-    return [  { order: this, step: 'putInMicrowave', startTime: this.putInMicrowaveTime() },
-              { order: this, step: 'takeOutOfMicrowave', startTime: this.takeOutOfMicrowaveTime() },
-              { order: this, step: 'topPotato', startTime: this.toppingTime() },
-              { order: this, step: 'servePotato', startTime: this.serveTime() }]
-  }
+//   steps(){
+//     return [  { order: this, step: 'putInMicrowave', startTime: this.putInMicrowaveTime() },
+//               { order: this, step: 'takeOutOfMicrowave', startTime: this.takeOutOfMicrowaveTime() },
+//               { order: this, step: 'topPotato', startTime: this.toppingTime() },
+//               { order: this, step: 'servePotato', startTime: this.serveTime() }]
+//   }
 
-  putInMicrowaveTime() {
-    return this.startTime
-  }
+//   putInMicrowaveTime() {
+//     return this.startTime
+//   }
 
-  freeForOtherThingsTime() {
-    return this.startTime + 1
-  }
+//   freeForOtherThingsTime() {
+//     return this.startTime + 1
+//   }
 
-  takeOutOfMicrowaveTime() {
-    return this.startTime + 181
-  }
+//   takeOutOfMicrowaveTime() {
+//     return this.startTime + 181
+//   }
 
-  toppingTime() {
-    return this.startTime + 211
-  }
+//   toppingTime() {
+//     return this.startTime + 211
+//   }
 
-  serveTime() {
-    return this.startTime + 241
-  }  
+//   serveTime() {
+//     return this.startTime + 241
+//   }  
 
-  completedTime(){
-    return this.startTime + 271
-  }
-}
+//   completedTime(){
+//     return this.startTime + 271
+//   }
+// }
 
 
 
@@ -266,4 +306,5 @@ var sortArrayByKey = (function() {
 })();
 
 module.exports = { SnackShack: SnackShack,
+                   Order: Order,
                    turnSecondsToMinutesAndSeconds: turnSecondsToMinutesAndSeconds}

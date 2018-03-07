@@ -8,6 +8,39 @@ test('it returns the correct schedule when one order is place', () => {
   expect(shack.getSchedule()).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 take a break!')
 })
 
+test('it returns the correct schedule when one order is place', () => {
+  let shack = new app.SnackShack()
+
+  shack.placeOrder()
+  
+  expect(shack.getSchedule()).toBe('1. 0:00 make sandwich\n2. 0:60 serve sandwich\n3. 1:30 take a break!')
+})
+
+test.only('it takes in steps and returns schedule', () => {
+  let shack = new app.SnackShack()
+
+  let order = new app.Order('sandwich', 0)
+
+  let sampleSteps =  [ { name: 'make', duration: 60, blocking: true, order: order },      
+                       { name: 'serve', duration: 30, blocking: true, order: order } ]
+  
+  expect(shack.getNewSchedule(sampleSteps)).toBe('1. 0:00 make sandwich\n2. 0:60 serve sandwich\n3. 1:30 take a break!')
+})
+
+test.only('it takes in steps and returns schedule', () => {
+  let shack = new app.SnackShack()
+
+  let order = new app.Order('sandwich', 0)
+  let order2 = new app.Order('sandwich', 0)
+
+  let sampleSteps =  [ { name: 'make', duration: 60, blocking: true, order: order },      
+                       { name: 'serve', duration: 30, blocking: true, order: order },
+                       { name: 'make', duration: 60, blocking: true, order: order },      
+                       { name: 'serve', duration: 30, blocking: true, order: order } ]
+  
+  expect(shack.getNewSchedule(sampleSteps)).toBe('1. 0:00 make sandwich\n2. 0:60 serve sandwich\n3. 1:30 make sandwich\n4. 2:30 serve sandwich\n5. 3:00 take a break!')
+})
+
 test('it returns the correct schedule when two orders are placed', () => {
   let shack = new app.SnackShack()
 
