@@ -17,7 +17,7 @@ test('it returns the correct schedule when two orders are placed', () => {
   expect(shack.getSchedule()).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 take a break!')
 })
 
-xtest('it returns the correct schedule when four orders are placed', () => {
+test('it returns the correct schedule when four orders are placed', () => {
   let shack = new app.SnackShack()
 
   shack.placeOrder()
@@ -28,13 +28,13 @@ xtest('it returns the correct schedule when four orders are placed', () => {
   expect(shack.getSchedule()).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 make sandwich 3\n6. 4:00 serve sandwich 3\n7. 4:30 make sandwich 4\n8. 5:30 serve sandwich 4\n9. 6:00 take a break!')
 })
 
-xtest('placeOrder returns expected wait time for first order', () => {
+test('placeOrder returns expected wait time for first order', () => {
   let shack = new app.SnackShack()
 
   expect(shack.placeOrder()).toBe('estimated wait: 1:30')
 })
 
-xtest('placeOrder returns expected for second order', () => {
+test('placeOrder returns expected for second order', () => {
   let shack = new app.SnackShack()
   
   shack.placeOrder()
@@ -42,7 +42,7 @@ xtest('placeOrder returns expected for second order', () => {
   expect(shack.placeOrder()).toBe('estimated wait: 3:00')
 })
 
-xtest('placeOrder returns expected for second order', () => {
+test('placeOrder returns expected for second order', () => {
   let shack = new app.SnackShack()
   
   shack.placeOrder()
@@ -52,7 +52,7 @@ xtest('placeOrder returns expected for second order', () => {
   expect(shack.placeOrder()).toBe('estimated wait: 6:00')
 })
 
-xtest('placeOrder returns expected for jacket potato order', () => {
+test('placeOrder returns expected for jacket potato order', () => {
   let shack = new app.SnackShack()
 
   expect(shack.placeOrder('jacket potato')).toBe('estimated wait: 4:31')
