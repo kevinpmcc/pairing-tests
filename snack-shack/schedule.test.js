@@ -1,52 +1,82 @@
 const app = require('./schedule.js')
 
 
-test('schedule#getSchedule returns the correct schedule when one sandwich order has been placed', () => {
-  let schedule = new app.Schedule()
-  let orders = [{ orderItem: 'sandwich' }]
+const fakeTimings = {
+        orderItems: [ 
+            {   
+                name: 'fakeitem1',
+                steps: [
+                    { name: 'fakestep1', duration: 5},
+                    { name: 'fakestep2', duration: 60}
+                ]
+            },
+            {    
+                name: 'fakeitem2',
+                steps: [
+                    { name: 'fakestep1', duration: 10},
+                    { name: 'fakestep2', duration: 20},
+                    { name: 'fakestep3', duration: 30},
+                    { name: 'fakestep4', duration: 40}
+                ] 
+            }
+        ]
+}
 
-  expect(schedule.getSchedule(orders)).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 take a break!')
+const timings = require('./foodTimings')
+
+
+test.only('schedule#getSchedule returns the correct schedule when one sandwich order has been placed', () => {
+  let schedule = new app.Schedule(fakeTimings)
+  let orders = [{ orderItem: 'fakeitem1' }]
+
+  expect(schedule.getSchedule(orders)).toBe('1. 0:00 fakestep1 fakeitem1 1\n2. 0:05 fakestep2 fakeitem1 1\n3. 1:05 take a break!')
 })
 
-test('schedule#getSchedule returns the correct schedule when two sandwich orders have been placed', () => {
-let schedule = new app.Schedule()
-let orders = [{ orderItem: 'sandwich' }, { orderItem: 'sandwich' }]
+test.only('schedule#getSchedule returns the correct schedule when two sandwich orders have been placed', () => {
+let schedule = new app.Schedule(fakeTimings)
+let orders = [{ orderItem: 'fakeitem1' }, { orderItem: 'fakeitem1' }]
 
-expect(schedule.getSchedule(orders)).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 take a break!')
+expect(schedule.getSchedule(orders)).toBe('1. 0:00 fakestep1 fakeitem1 1\n2. 0:05 fakestep2 fakeitem1 1\n3. 1:05 fakestep1 fakeitem1 2\n4. 1:10 fakestep2 fakeitem1 2\n5. 2:10 take a break!')
 })
 
-test('schedule#getSchedule returns the correct schedule when four sandwich orders have been placed', () => {
-  let schedule = new app.Schedule()
-  let orders = [{ orderItem: 'sandwich' }, { orderItem: 'sandwich' }, { orderItem: 'sandwich' }, { orderItem: 'sandwich' }]
+test.only('schedule#getSchedule returns the correct schedule when four sandwich orders have been placed', () => {
+  let schedule = new app.Schedule(fakeTimings)
+  let orders = [{ orderItem: 'fakeitem1' }, { orderItem: 'fakeitem1' }, { orderItem: 'fakeitem1' }, { orderItem: 'fakeitem1' }]
   
-  expect(schedule.getSchedule(orders)).toBe('1. 0:00 make sandwich 1\n2. 0:60 serve sandwich 1\n3. 1:30 make sandwich 2\n4. 2:30 serve sandwich 2\n5. 3:00 make sandwich 3\n6. 4:00 serve sandwich 3\n7. 4:30 make sandwich 4\n8. 5:30 serve sandwich 4\n9. 6:00 take a break!')
+  expect(schedule.getSchedule(orders)).toBe('1. 0:00 fakestep1 fakeitem1 1\n2. 0:05 fakestep2 fakeitem1 1\n3. 1:05 fakestep1 fakeitem1 2\n4. 1:10 fakestep2 fakeitem1 2\n5. 2:10 fakestep1 fakeitem1 3\n6. 2:15 fakestep2 fakeitem1 3\n7. 3:15 fakestep1 fakeitem1 4\n8. 3:20 fakestep2 fakeitem1 4\n9. 4:20 take a break!')
   })
 
-  test('schedule#createSteps returns the correct number of steps for an item', () => {
-    let schedule = new app.Schedule()
+  test.only('schedule#createSteps returns the correct number of steps for an item', () => {
+    let schedule = new app.Schedule(fakeTimings)
 
-    expect(schedule.createSteps([{ orderItem: 'sandwich' }]).length).toEqual(2)
+    expect(schedule.createSteps([{ orderItem: 'fakeitem1' }]).length).toEqual(2)
   })
 
-  test('schedule#createSteps returns the correct number of steps', () => {
-    let schedule = new app.Schedule()
+  test.only('schedule#createSteps returns the correct number of steps', () => {
+    let schedule = new app.Schedule(fakeTimings)
 
-    expect(schedule.createSteps([{ orderItem: 'sandwich' }, { orderItem: 'sandwich' }]).length).toEqual(4)
+    expect(schedule.createSteps([{ orderItem: 'fakeitem1' }, { orderItem: 'fakeitem1' }]).length).toEqual(4)
   })
 
-  test('returns all necessary elements in steps', () => {
-    let schedule = new app.Schedule()
+  test.only('schedule#createSteps returns the correct number of steps', () => {
+    let schedule = new app.Schedule(fakeTimings)
 
-    expect(schedule.createSteps([{ orderItem: 'sandwich' }])).toEqual(
-      [ { name: 'make', orderItem: 'sandwich', duration: 60, orderItemNumber: 1 },
-        { name: 'serve', orderItem: 'sandwich', duration: 30, orderItemNumber: 1 }
+    expect(schedule.createSteps([{ orderItem: 'fakeitem1' }, { orderItem: 'fakeitem2' }]).length).toEqual(6)
+  })
+
+  test.only('returns all necessary elements in steps', () => {
+    let schedule = new app.Schedule(fakeTimings)
+
+    expect(schedule.createSteps([{ orderItem: 'fakeitem1' }])).toEqual(
+      [ { name: 'fakestep1', orderItem: 'fakeitem1', duration: 5, orderItemNumber: 1 },
+        { name: 'fakestep2', orderItem: 'fakeitem1', duration: 60, orderItemNumber: 1 }
       ])
   })
 
   test('returns all necessary elements in steps', () => {
     let schedule = new app.Schedule()
 
-    expect(schedule.createSteps([{ orderItem: 'sandwich' }, { orderItem: 'sandwich'}])).toEqual(
+    expect(schedule.createSteps([{ orderItem: 'fakeitem1' }, { orderItem: 'fakeitem1'}])).toEqual(
       [ { name: 'make', orderItem: 'sandwich', duration: 60, orderItemNumber: 1 },
         { name: 'serve', orderItem: 'sandwich', duration: 30, orderItemNumber: 1 },
         { name: 'make', orderItem: 'sandwich', duration: 60, orderItemNumber: 2 },

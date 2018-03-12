@@ -1,21 +1,21 @@
 const formatSecondsToMinutes = require('./helperFunctions').formatSecondsToMinutes
 const createStep = require('./step.js')
-const timings = require('./foodTimings')
+
 
 class Schedule {
+  constructor(timings) {
+    this.timings = timings
+  }
 
   getSchedule(orders) {
     let schedule = ''
     let lineNumber = 1
     let seconds = 0
-    let steps = this.createSteps(orders)
-
-    for (let i = 0; i < steps.length; i++) {
-      let step = steps[i]
+    this.createSteps(orders).map(step => {
       schedule += Schedule.standardLine(lineNumber, seconds, step)
       lineNumber ++
       seconds += step.duration
-    }
+    })
     schedule += Schedule.finalLine(lineNumber, seconds)
     return schedule
   }
@@ -30,10 +30,14 @@ class Schedule {
 
   createSteps(orders) {
     return Array.prototype.concat(...orders.map((order, index) => { 
-      return timings.orderItems.filter((orderItem => orderItem.name === order.orderItem))[0].steps.map((step) => {
+      return this.filterTimingsForOrderItem(order.orderItem).map((step) => {
         return createStep({ name: step.name, orderItem: order.orderItem, duration: step.duration, orderItemNumber: (index +1)})
       })
     }))
+  }
+
+  filterTimingsForOrderItem(currentOrderItem) {
+    return this.timings.orderItems.filter((orderItem => orderItem.name === currentOrderItem))[0].steps
   }
 }
 
