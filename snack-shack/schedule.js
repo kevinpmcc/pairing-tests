@@ -21,7 +21,7 @@ class Schedule {
   }
 
   static standardLine(lineNumber, seconds, step) {
-    return lineNumber + '. ' + formatSecondsToMinutes(seconds) + ' ' + step.name + ' ' + step.foodType + ' ' + step.orderItemNumber + '\n'
+    return lineNumber + '. ' + formatSecondsToMinutes(seconds) + ' ' + step.name + ' ' + step.orderItem + ' ' + step.orderItemNumber + '\n'
   }
 
   static finalLine(lineNumber, seconds) {
@@ -30,8 +30,8 @@ class Schedule {
 
   createSteps(orders) {
     return Array.prototype.concat(...orders.map((order, index) => { 
-      return timings.foodTypes.filter((foodType => foodType.name === order.foodType))[0].steps.map((step) => {
-        return createStep({ name: step.name, foodType: order.foodType, duration: step.duration, orderItemNumber: (index +1)})
+      return timings.orderItems.filter((orderItem => orderItem.name === order.orderItem))[0].steps.map((step) => {
+        return createStep({ name: step.name, orderItem: order.orderItem, duration: step.duration, orderItemNumber: (index +1)})
       })
     }))
   }

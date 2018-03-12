@@ -1,3 +1,3 @@
-const createStep = ({ name, foodType, duration, orderItemNumber}) => ({ name, foodType, duration, orderItemNumber })
+const createStep = ({ name, orderItem, duration, orderItemNumber}) => ({ name, orderItem, duration, orderItemNumber })
 
 module.exports = createStep

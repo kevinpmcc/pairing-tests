@@ -9,8 +9,8 @@ class SnackShack {
     this.currentTime = 0
   }
 
-  placeOrder(foodType='sandwich') {
-    let order = createOrder({ foodType })
+  placeOrder(orderItem='sandwich') {
+    let order = createOrder({ orderItem }, timings)
     this.orders.push(order)
     this.currentTime += order.totalTime
     return 'estimated wait: ' + formatSecondsToMinutes(this.currentTime)    

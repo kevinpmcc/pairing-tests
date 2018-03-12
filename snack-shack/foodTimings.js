@@ -1,5 +1,5 @@
 const timings = {
-  foodTypes: [
+  orderItems: [
     {
       name: 'sandwich',
       steps: [

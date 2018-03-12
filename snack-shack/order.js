@@ -1,8 +1,6 @@
-const timings = require('./foodTimings')
-
-const createOrder =  ({ foodType }) => ({
-    foodType,
-    totalTime: sumAllStepDurations(timings.foodTypes.filter((timingsFoodType => timingsFoodType.name === foodType))[0].steps)
+const createOrder =  ({ orderItem }, timings) => ({
+    orderItem,
+    totalTime: sumAllStepDurations(timings.orderItems.filter((timingsorderItem => timingsorderItem.name === orderItem))[0].steps)
 })
 
 function sumAllStepDurations(steps) {
