@@ -1,5 +1,5 @@
-const formatSecondsToMinutes = require('./helperFunctions').formatSecondsToMinutes
 const createStep = require('./step.js')
+const Printer = require('./printer')
 
 
 class Schedule {
@@ -9,11 +9,7 @@ class Schedule {
 
   getSchedule(orders) {
     let steps = this.createSteps(orders)
-    let linesArray = steps.map((step, index) => {
-      return Schedule.standardLine(index + 1, step)
-    })
-    linesArray.push(Schedule.finalLine(steps.length + 1, Schedule.getFinalLineStartTime(steps)))
-    return Schedule.printOutLines(linesArray)
+    return Printer.printSchedule(steps)
   }
 
   createSteps(orders) {
@@ -44,24 +40,6 @@ class Schedule {
   static getDurationOfAllPreviousSteps(flattenedSteps, index) {
     let relevantSteps = flattenedSteps.slice(0, index)
     return relevantSteps.reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
-  }
-
-  static printOutLines(linesArray) {
-    let returnString = ''
-    for(let line of linesArray) { returnString += line }
-    return returnString
-  }
-
-  static standardLine(lineNumber, step) {
-    return lineNumber + '. ' + formatSecondsToMinutes(step.startTime) + ' ' + step.name + ' ' + step.orderItem + ' ' + step.orderItemNumber + '\n'
-  }
-
-  static finalLine(lineNumber, seconds) {
-  return lineNumber + '. ' + formatSecondsToMinutes(seconds) + ' take a break!'
-  }
-
-  static getFinalLineStartTime(steps) {
-    return steps[steps.length-1].duration + steps[steps.length-1].startTime
   }
 }
 
