@@ -64,7 +64,7 @@ test.only('schedule#getSchedule returns the correct schedule when four sandwich 
     expect(schedule.createSteps([{ orderItem: 'fakeitem1' }, { orderItem: 'fakeitem2' }]).length).toEqual(6)
   })
 
-  test.only('returns all necessary elements in steps', () => {
+  test('returns all necessary elements in steps', () => {
     let schedule = new app.Schedule(fakeTimings)
 
     expect(schedule.createSteps([{ orderItem: 'fakeitem1' }])).toEqual(
@@ -95,4 +95,13 @@ test.only('schedule#getSchedule returns the correct schedule when four sandwich 
         { name: 'make', orderItem: 'sandwich', duration: 60, orderItemNumber: 3 },
         { name: 'serve', orderItem: 'sandwich', duration: 30, orderItemNumber: 3 }
       ])
+  })
+
+  test.only('schedule#flattenedSteps adds startTime by adding up duration of all previous steps', () => {
+      
+
+      let flattenedSteps = [ { duration: 5 }, { duration: 10 }, { duration: 20 } ]
+
+      expect(app.Schedule.addStartTimeToSteps(flattenedSteps)[0].startTime).toEqual(0)
+      expect(app.Schedule.addStartTimeToSteps(flattenedSteps)[1].startTime).toEqual(5)
   })
