@@ -24,3 +24,28 @@ test('snackShack#placeOrder increases number of orders each time', () => {
 
     expect(shack.orders.length).toBe(4)
 })
+
+test('snackShack#howManyOfOrderItemOrdered returns the number of previous orders of an order item', () => {
+    let shack = new app.SnackShack()
+
+    shack.placeOrder('sandwich')
+    shack.placeOrder('sandwich')
+
+    expect(shack.howManyOfOrderItemOrdered('sandwich')).toBe(2)
+})
+
+test('snackShack#howManyOfOrderItemOrdered returns the number of previous orders of an order item', () => {
+    let shack = new app.SnackShack()
+
+    shack.placeOrder('jacket potato')
+    shack.placeOrder('jacket potato')
+    shack.placeOrder('jacket potato')
+    shack.placeOrder('sandwich')
+    shack.placeOrder('sandwich')
+    shack.placeOrder('jacket potato')
+    shack.placeOrder('jacket potato')
+    shack.placeOrder('jacket potato')
+
+
+    expect(shack.howManyOfOrderItemOrdered('jacket potato')).toBe(6)
+})

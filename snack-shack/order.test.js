@@ -2,7 +2,6 @@ const createOrder = require('./order')
 
 const sandwichDurationStep1 = 10
 const sandwichDurationStep2 = 45
-
 const potatoDurationStep1 = 5
 const potatoDurationStep2 = 60
 const potatoDurationStep3 = 30
@@ -31,16 +30,19 @@ const timings = {
     ]
   }
 
-test('returns the orderItem', () => {
-  expect(createOrder({ orderItem: 'sandwich' }, timings).orderItem).toBe('sandwich')
+test.only('returns the order with correct orderItem and orderItemNumber', () => {
+  expect(createOrder({ orderItem: 'sandwich' }, 1, timings).orderItem).toBe('sandwich')
+  expect(createOrder({ orderItem: 'sandwich' }, 1, timings).orderItemNumber).toBe(1)
 })
 
-test('returns the total time of all steps', () => {
+test.only('returns the total time of all steps', () => {
   let totalSandwichTime = sandwichDurationStep1 + sandwichDurationStep2
-  expect(createOrder({ orderItem: 'sandwich' }, timings).totalTime).toBe(totalSandwichTime)
+  expect(createOrder({ orderItem: 'sandwich' }, 1, timings).totalTime).toBe(totalSandwichTime)
 })
 
-test('returns the total time of all steps', () => {
+test.only('returns the total time of all steps', () => {
   let totalPotatoTime = potatoDurationStep1 + potatoDurationStep2 + potatoDurationStep3 + potatoDurationStep4 + potatoDurationStep5
-  expect(createOrder({ orderItem: 'jacket potato'}, timings).totalTime).toBe(totalPotatoTime)
+  expect(createOrder({ orderItem: 'jacket potato'}, 1, timings).totalTime).toBe(totalPotatoTime)
 })
+
+test.only

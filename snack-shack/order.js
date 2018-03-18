@@ -1,7 +1,6 @@
-const createOrder =  ({ orderItem }, timings) => ({
-    orderItem,
-    totalTime: sumAllStepDurations(relevantSteps(timings, orderItem))
-})
+function createOrder({ orderItem }, orderItemNumber, timings) {
+    return { orderItem, orderItemNumber, totalTime: sumAllStepDurations(relevantSteps(timings, orderItem)) }
+}
 
 function sumAllStepDurations(steps) {
     return steps.reduce((a, b) => ({ duration: a.duration + b.duration  })).duration 

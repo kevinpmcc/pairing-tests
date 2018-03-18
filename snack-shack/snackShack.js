@@ -1,4 +1,4 @@
-const Schedule = require('./schedule.js').Schedule
+const getSchedule = require('./schedule.js').getSchedule
 const timings = require('./foodTimings')
 const formatSecondsToMinutes = require('./helperFunctions').formatSecondsToMinutes
 const createOrder = require('./order')
@@ -10,15 +10,18 @@ class SnackShack {
   }
 
   placeOrder(orderItem='sandwich') {
-    let order = createOrder({ orderItem }, timings)
+    let order = createOrder({ orderItem }, this.howManyOfOrderItemOrdered(orderItem), timings)
     this.orders.push(order)
     this.currentTime += order.totalTime
     return 'estimated wait: ' + formatSecondsToMinutes(this.currentTime)    
   }
 
   getSchedule() {
-    let schedule = new Schedule(timings)
-    return schedule.getSchedule(this.orders)
+    return getSchedule(this.orders, timings)
+  }
+
+  howManyOfOrderItemOrdered(orderItem) {
+    return this.orders.filter(order => order.orderItem === orderItem).length
   }
 }
 

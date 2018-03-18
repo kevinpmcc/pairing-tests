@@ -1,50 +1,48 @@
 const createStep = require('./step.js')
-const Printer = require('./printer')
+const printSchedule = require('./printer')
+const foodTimings = require('./foodTimings')
 
 
-class Schedule {
-  constructor(timings) {
-    this.timings = timings
-  }
+function getSchedule(orders, timings=foodTimings) {
+  let steps = createSteps(orders, timings)
+  return printSchedule(steps)
+}
 
-  getSchedule(orders) {
-    let steps = this.createSteps(orders)
-    return Printer.printSchedule(steps)
-  }
+function createSteps(orders, timings) {
+  let flattenedSteps = Array.prototype.concat(...createUnflattenedSteps(orders, timings))
+  return addStartTimeToSteps(flattenedSteps)
+}
 
-  createSteps(orders) {
-    let flattenedSteps = Array.prototype.concat(...this.createUnflattenedSteps(orders))
-    return Schedule.addStartTimeToSteps(flattenedSteps)
-  }
-
-  createUnflattenedSteps(orders) {
-    return orders.map((order, orderIndex) => { 
-        return this.filterTimingsForOrderItem(order.orderItem).map((step, stepIndex) => {
-          return createStep({ name: step.name, orderItem: order.orderItem, duration: step.duration, startTime: '', orderItemNumber: (orderIndex + 1)})
-        })
-      })
-  }
-
-  filterTimingsForOrderItem(currentOrderItem) {
-    return this.timings.orderItems.filter((orderItem => orderItem.name === currentOrderItem))[0].steps
-  }
-
-  static addStartTimeToSteps(flattenedSteps) {
-    return flattenedSteps.map((flattenedStep, index) => {
-        if (index === 0 ) flattenedStep.startTime = 0
-        if (index !== 0) flattenedStep.startTime = Schedule.getDurationOfAllPreviousSteps(flattenedSteps, index)
-        return flattenedStep
+function createUnflattenedSteps(orders, timings) {
+  return orders.map((order, orderIndex) => { 
+    return filterTimingsForOrderItem(order.orderItem, timings).map((step, stepIndex) => {
+      return createStep({ name: step.name, orderItem: order.orderItem, duration: step.duration, startTime: '', orderItemNumber: order.orderItemNumber})
     })
-  }
+  })
+}
 
-  static getDurationOfAllPreviousSteps(flattenedSteps, index) {
-    let relevantSteps = flattenedSteps.slice(0, index)
-    return relevantSteps.reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
-  }
+function filterTimingsForOrderItem(currentOrderItem, timings) {
+  return timings.orderItems.filter((orderItem => orderItem.name === currentOrderItem))[0].steps
+}
+
+function addStartTimeToSteps(flattenedSteps) {
+  return flattenedSteps.map((flattenedStep, index) => {
+    if (index === 0 ) flattenedStep.startTime = 0
+    if (index !== 0) flattenedStep.startTime = getDurationOfAllPreviousSteps(flattenedSteps, index)
+    return flattenedStep
+  })
+}
+
+function getDurationOfAllPreviousSteps(flattenedSteps, index) {
+  let relevantSteps = flattenedSteps.slice(0, index)
+  return relevantSteps.reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
 }
 
 
-module.exports = { Schedule: Schedule }
+
+module.exports = {  getSchedule: getSchedule, 
+                    createSteps: createSteps,
+                    addStartTimeToSteps: addStartTimeToSteps }
 
 
 

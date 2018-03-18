@@ -1,32 +1,30 @@
 const formatSecondsToMinutes = require('./helperFunctions').formatSecondsToMinutes
 
-class Printer {
 
-  static printSchedule(steps) {
+  function printSchedule(steps) {
     let linesArray = steps.map((step, index) => {
-      return Printer.standardLine(index + 1, step)
+      return standardLine(index + 1, step)
     })
-    linesArray.push(Printer.finalLine(steps.length + 1, Printer.getFinalLineStartTime(steps)))
-    return Printer.printOutLines(linesArray)
+    linesArray.push(finalLine(steps.length + 1, getFinalLineStartTime(steps)))
+    return printOutLines(linesArray)
   }
 
-  static printOutLines(linesArray) {
+  function printOutLines(linesArray) {
     let returnString = ''
     for(let line of linesArray) { returnString += line }
     return returnString
   }
 
-  static standardLine(lineNumber, step) {
+  function standardLine(lineNumber, step) {
     return lineNumber + '. ' + formatSecondsToMinutes(step.startTime) + ' ' + step.name + ' ' + step.orderItem + ' ' + step.orderItemNumber + '\n'
   }
 
-  static finalLine(lineNumber, seconds) {
+  function finalLine(lineNumber, seconds) {
   return lineNumber + '. ' + formatSecondsToMinutes(seconds) + ' take a break!'
   }
 
-  static getFinalLineStartTime(steps) {
+  function getFinalLineStartTime(steps) {
     return steps[steps.length-1].duration + steps[steps.length-1].startTime
   }
-}
 
-module.exports = Printer
+module.exports = printSchedule;
