@@ -75,7 +75,20 @@ test('snackShack#maxWaitTime will return undefined if nothing passed in', () => 
 })
 
 test('snackShack#inventory will store number of items in stock', () => {
-    let shack = new app.SnackShack(undefined, 45)
+    let shack = new app.SnackShack(undefined, { sandwich: 45 })
 
-    expect(shack.inventory).toEqual(45)
+    expect(shack.inventory).toEqual({ sandwich: 45 })
+})
+
+test('snackShack#notEnoughInventory will return false if inventory is undefined', () => {
+    let shack = new app.SnackShack()
+
+    expect(shack.notEnoughInventory('sandwich')).toEqual(false)
+})
+
+
+test('snackShack#notEnoughInventory will return true if inventory is 0', () => {
+    let shack = new app.SnackShack(undefined, { sandwich: 0 })
+
+    expect(shack.notEnoughInventory('sandwich')).toEqual(true)
 })

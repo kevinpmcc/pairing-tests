@@ -70,7 +70,7 @@ test('if max order wait time is given, reject orders placed where wait time is o
 })
 
 test('if orders are above inventory, reject orders', () => {
-  let shack = new app.SnackShack(undefined, 45)
+  let shack = new app.SnackShack(undefined, { sandwich: 45 })
 
   for (var i = 0; i < 46; i++) {
     shack.placeOrder()
