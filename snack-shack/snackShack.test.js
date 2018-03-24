@@ -25,6 +25,17 @@ test('snackShack#placeOrder increases number of orders each time', () => {
     expect(shack.orders.length).toBe(4)
 })
 
+test('snackHack#placeOrder will not accept order if wait time if over max wait time', () => {
+    let shack = new app.SnackShack(300)
+
+    shack.placeOrder()
+    shack.placeOrder()
+    shack.placeOrder()
+
+    expect(shack.placeOrder()).toEqual("sorry, we cannot take your order as it would take too long")
+    expect(shack.orders.length).toBe(3)
+})
+
 test('snackShack#howManyOfOrderItemOrdered returns the number of previous orders of an order item', () => {
     let shack = new app.SnackShack()
 
@@ -48,4 +59,17 @@ test('snackShack#howManyOfOrderItemOrdered returns the number of previous orders
 
 
     expect(shack.howManyOfItemOrdered('jacket potato')).toBe(6)
+})
+
+test('snackShack#maxWaitTime will return maxWaitTime passed in', () => {
+    let maxWaitTime = 300
+    let shack = new app.SnackShack(maxWaitTime)
+
+    expect(shack.maxWaitTime).toEqual(maxWaitTime)
+})
+
+test('snackShack#maxWaitTime will return undefined if nothing passed in', () => {
+    let shack = new app.SnackShack()
+
+    expect(shack.maxWaitTime).toEqual(undefined)
 })

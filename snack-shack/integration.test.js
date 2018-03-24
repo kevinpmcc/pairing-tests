@@ -58,8 +58,8 @@ test('placeOrder returns expected for jacket potato order', () => {
   expect(shack.placeOrder('jacket potato')).toBe('estimated wait: 4:31')
 })
 
-xtest('if max order wait time is given, reject orders placed where wait time is over the time', () => {
-  let maxWaitTime = 5
+test('if max order wait time is given, reject orders placed where wait time is over the time', () => {
+  let maxWaitTime = 300
   let shack = new app.SnackShack(maxWaitTime)
 
   shack.placeOrder()
