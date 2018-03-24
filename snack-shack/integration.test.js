@@ -69,8 +69,8 @@ test('if max order wait time is given, reject orders placed where wait time is o
   expect(shack.placeOrder()).toBe('sorry, we cannot take your order as it would take too long')
 })
 
-xtest('if orders are above inventory, reject orders', () => {
-  let shack = new app.SnackShack()
+test('if orders are above inventory, reject orders', () => {
+  let shack = new app.SnackShack(undefined, 45)
 
   for (var i = 0; i < 46; i++) {
     shack.placeOrder()

@@ -73,3 +73,9 @@ test('snackShack#maxWaitTime will return undefined if nothing passed in', () => 
 
     expect(shack.maxWaitTime).toEqual(undefined)
 })
+
+test('snackShack#inventory will store number of items in stock', () => {
+    let shack = new app.SnackShack(undefined, 45)
+
+    expect(shack.inventory).toEqual(45)
+})
