@@ -30,19 +30,18 @@ const timings = {
     ]
   }
 
-test.only('returns the order with correct orderItem and orderItemNumber', () => {
+test('returns the order with correct orderItem and orderItemNumber', () => {
   expect(createOrder({ orderItem: 'sandwich' }, 1, timings).orderItem).toBe('sandwich')
   expect(createOrder({ orderItem: 'sandwich' }, 1, timings).orderItemNumber).toBe(1)
 })
 
-test.only('returns the total time of all steps', () => {
+test('returns the total time of all steps', () => {
   let totalSandwichTime = sandwichDurationStep1 + sandwichDurationStep2
   expect(createOrder({ orderItem: 'sandwich' }, 1, timings).totalTime).toBe(totalSandwichTime)
 })
 
-test.only('returns the total time of all steps', () => {
+test('returns the total time of all steps', () => {
   let totalPotatoTime = potatoDurationStep1 + potatoDurationStep2 + potatoDurationStep3 + potatoDurationStep4 + potatoDurationStep5
   expect(createOrder({ orderItem: 'jacket potato'}, 1, timings).totalTime).toBe(totalPotatoTime)
 })
 
-test.only

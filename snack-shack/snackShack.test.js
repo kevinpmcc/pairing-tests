@@ -31,7 +31,7 @@ test('snackShack#howManyOfOrderItemOrdered returns the number of previous orders
     shack.placeOrder('sandwich')
     shack.placeOrder('sandwich')
 
-    expect(shack.howManyOfOrderItemOrdered('sandwich')).toBe(2)
+    expect(shack.howManyOfItemOrdered('sandwich')).toBe(2)
 })
 
 test('snackShack#howManyOfOrderItemOrdered returns the number of previous orders of an order item', () => {
@@ -47,5 +47,5 @@ test('snackShack#howManyOfOrderItemOrdered returns the number of previous orders
     shack.placeOrder('jacket potato')
 
 
-    expect(shack.howManyOfOrderItemOrdered('jacket potato')).toBe(6)
+    expect(shack.howManyOfItemOrdered('jacket potato')).toBe(6)
 })

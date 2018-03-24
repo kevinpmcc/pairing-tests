@@ -10,7 +10,7 @@ class SnackShack {
   }
 
   placeOrder(orderItem='sandwich') {
-    let order = createOrder({ orderItem }, this.howManyOfOrderItemOrdered(orderItem), timings)
+    let order = createOrder({ orderItem }, this.howManyOfItemOrdered(orderItem) + 1, timings)
     this.orders.push(order)
     this.currentTime += order.totalTime
     return 'estimated wait: ' + formatSecondsToMinutes(this.currentTime)    
@@ -20,7 +20,7 @@ class SnackShack {
     return getSchedule(this.orders, timings)
   }
 
-  howManyOfOrderItemOrdered(orderItem) {
+  howManyOfItemOrdered(orderItem) {
     return this.orders.filter(order => order.orderItem === orderItem).length
   }
 }
