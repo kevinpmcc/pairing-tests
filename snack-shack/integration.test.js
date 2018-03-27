@@ -79,7 +79,15 @@ test('if orders are above inventory, reject orders', () => {
   expect(shack.placeOrder()).toBe('sorry, we cannot take your order as we have no more stock')
 })
 
-xtest('can serve jacket potatoes as well as sandwiches', () => {
+test('can serve jacket potatoes as well as sandwiches', () => {
+  let shack = new app.SnackShack()
+
+  shack.placeOrder('jacket potato')
+  
+  expect(shack.getSchedule()).toBe('1. 0:00 put in microwave jacket potato 1\n2. 3:01 take out of microwave jacket potato 1\n3. 3:31 top jacket potato 1\n4. 4:01 serve jacket potato 1\n5. 4:31 take a break!')
+})
+
+test('can serve jacket potatoes as well as sandwiches', () => {
   let shack = new app.SnackShack()
 
   shack.placeOrder('jacket potato')

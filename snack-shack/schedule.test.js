@@ -91,8 +91,16 @@ test('schedule#getSchedule returns the correct schedule when four sandwich order
   test('schedule#flattenedSteps adds startTime by adding up duration of all previous steps', () => {
       
 
-      let flattenedSteps = [ { duration: 5 }, { duration: 10 }, { duration: 20 } ]
+    let flattenedSteps = [ { duration: 5 }, { duration: 10 }, { duration: 20 } ]
 
-      expect(app.addStartTimeToSteps(flattenedSteps)[0].startTime).toEqual(0)
-      expect(app.addStartTimeToSteps(flattenedSteps)[1].startTime).toEqual(5)
+    expect(app.addStartTimeToSteps(flattenedSteps)[0].startTime).toEqual(0)
+    expect(app.addStartTimeToSteps(flattenedSteps)[1].startTime).toEqual(5)
+  })
+
+  test('schedule#removeAsyncSteps removes any steps which are async', () => {
+
+    let steps = [ { name: 'step 1', async: true }, { name: 'step 2', async: false }, { name: 'step 3', async: false }]
+
+    expect(app.removeAsyncSteps(steps).length).toBe(2)
+    expect(app.removeAsyncSteps(steps)).toEqual([ { name: 'step 2', async: false }, { name: 'step 3', async: false}])
   })

@@ -10,13 +10,13 @@ function getSchedule(orders, timings=foodTimings) {
 
 function createSteps(orders, timings) {
   let flattenedSteps = Array.prototype.concat(...createUnflattenedSteps(orders, timings))
-  return addStartTimeToSteps(flattenedSteps)
+  return removeAsyncSteps(addStartTimeToSteps(flattenedSteps))
 }
 
 function createUnflattenedSteps(orders, timings) {
   return orders.map((order, orderIndex) => { 
     return filterTimingsForOrderItem(order.orderItem, timings).map((step, stepIndex) => {
-      return createStep({ name: step.name, orderItem: order.orderItem, duration: step.duration, startTime: '', orderItemNumber: order.orderItemNumber})
+      return createStep({ name: step.name, orderItem: order.orderItem, duration: step.duration, startTime: '', orderItemNumber: order.orderItemNumber, async: step.async})
     })
   })
 }
@@ -38,11 +38,15 @@ function getDurationOfAllPreviousSteps(flattenedSteps, index) {
   return relevantSteps.reduce((a, b) => ({ duration: a.duration + b.duration  })).duration
 }
 
+function removeAsyncSteps(steps) {
+  return steps.filter(step => !step.async)
+}
 
 
 module.exports = {  getSchedule: getSchedule, 
                     createSteps: createSteps,
-                    addStartTimeToSteps: addStartTimeToSteps }
+                    addStartTimeToSteps: addStartTimeToSteps,
+                    removeAsyncSteps: removeAsyncSteps }
 
 
 
