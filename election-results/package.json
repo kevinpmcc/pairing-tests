@@ -1,0 +1,17 @@
+{
+  "name": "election-results",
+  "version": "1.0.0",
+  "description": "It's election night! Exciting! We have a feed of election results from a data supplier. They will supply us a file which will be updated throughout the night as results come in.",
+  "main": "feature.test.js",
+  "dependencies": {
+    "jest": "^22.4.3"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
