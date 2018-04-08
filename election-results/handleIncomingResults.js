@@ -48,10 +48,7 @@ function cleanUpData(rawResults) {
 }
 
 function getPartyName(abbriev) {
-    return partiesAbbrievs[removeWhiteSpaceAtStart(abbriev)]
-}
-function removeWhiteSpaceAtStart(str) {
-    return str.substr(1, str.length)
+    return partiesAbbrievs[abbriev.trim()]
 }
 
 function createLine(partyResults, totalVotes) {
@@ -60,7 +57,6 @@ function createLine(partyResults, totalVotes) {
 
 
 module.exports = { formatResults: formatResults,
-                   removeWhiteSpaceAtStart: removeWhiteSpaceAtStart,
                    getPartyName: getPartyName,
                    partiesAndPercentages: partiesAndPercentages
                 }
