@@ -1,8 +1,8 @@
+app = require('./handleIncomingResults')
 const formatResults = require('./handleIncomingResults').formatResults
 const removeWhiteSpaceAtStart = require('./handleIncomingResults').removeWhiteSpaceAtStart
 const getPartyName = require('./handleIncomingResults').getPartyName
 const partiesAndPercentages = require('./handleIncomingResults').partiesAndPercentages
-const validate = require('./handleIncomingResults').validate
 
 test('formatResults will return the name of the constituency', () => {
     let actual = formatResults('Cardiff West, 11014, C, 17803, L, 4923, UKIP, 2069, LD\n')
@@ -36,10 +36,4 @@ test('partiesAndPercentages takes an array of numbers and abbreviations and retu
     expect(partiesAndPercentages(rawResults)).toBe('Conservative Party: 20.00%\nLabour Party: 80.00%\n')
 })
 
-test('validate returns false if first element of results is not az string', () => {
-    expect(validate(['2000'])).toBe(false)
-})
 
-test('validate returns true if first element of results is az string', () => {
-    expect(validate(['Cardiff West'])).toBe(true)
-})

@@ -1,4 +1,5 @@
 const fs = require('fs')
+const Validator = require('./validateResults')
 
 const partiesAbbrievs = {
     'L': 'Labour Party',
@@ -21,32 +22,14 @@ function formatResults(electionResults) {
 }
 
 function formatLine(electionResults) {
-      resultsArray = electionResults.split(',')
-    if (validate(resultsArray)) {
+    resultsArray = electionResults.split(',')
+    if (new Validator(resultsArray).validate()) {
       let constituencyName = resultsArray.shift()
       let results = partiesAndPercentages(resultsArray)
       return constituencyName + '\n' + partiesAndPercentages(resultsArray)
     } else {
       return ''
     }
-}
-
-function writeError(errorMsg) {
-    fs.appendFile('errorLogs.txt', errorMsg + '\n', () => {})
-}
-
-const types = {
-  constituencyName: /^[a-zA-Z& ]+$/ 
-}
-
-function validate(electionResults) {
-  let constituencyName = electionResults[0]
-  if (types.constituencyName.test(constituencyName)) {
-    return true
-  } else {
-    writeError('Expected the first word of a line to be constituency name')
-    return false
-  }
 }
 
 function partiesAndPercentages(rawResults) {
@@ -78,9 +61,12 @@ function createLine(partyResults, totalVotes) {
     return partyResults.party + ': ' + (partyResults.votes / totalVotes * 100).toFixed(2)
 }
 
+const types = {
+    constituencyName: /^[a-zA-Z& ]+$/ 
+}
+
 
 module.exports = { formatResults: formatResults,
                    getPartyName: getPartyName,
-                   validate: validate,
                    partiesAndPercentages: partiesAndPercentages
                 }
