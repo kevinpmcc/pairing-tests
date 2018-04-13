@@ -26,8 +26,12 @@ class Validator {
     validate() {
         let constituencyName = this.line[0]
         if (!this.validateConstituencyName(constituencyName)) return false
-        if (!this.validateNumberOfVotes(this.line[1])) return false
-        if (!this.validatePartyAbbriev(this.line[2])) return false
+        let array = this.line.slice()
+        array.shift()
+        for (let i=0; i < array.length; i+=2) {
+            if (!this.validateNumberOfVotes(array[i])) return false
+            if (!this.validatePartyAbbriev(array[i+1])) return false
+        }
         return true
     }
 
