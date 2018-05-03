@@ -1,28 +1,65 @@
 const fs = require('fs')
 const Validator = require('./validateResults')
-test('validate returns false if first element of results is not az string', () => {
-    let v = new Validator(['30000', 'L', 'Cardiff West'])
+test.only('validate returns false if first element of results is not az string', () => {
+    let v = new Validator({
+        'Cardiff West':
+            {
+                'Labour Party': '10.00', 'UKIP': '10.00',
+                'Liberal Democrats': '70.00', 'Conservative Party': '10.00'
+            }, 'Islington South & Finsbury': { 'Independent': '20.00', 'Green Party': '80.00' }
+    })
 
-    expect(v.validate()).toBe(false)
+    expect(v.validate()).toEqual({
+        'Cardiff West':
+            {
+                'Labour Party': '10.00', 'UKIP': '10.00',
+                'Liberal Democrats': '70.00', 'Conservative Party': '10.00'
+            }, 'Islington South & Finsbury': { 'Independent': '20.00', 'Green Party': '80.00' }
+    })
 })
 
-test('validate returns true if first element of results is az string', () => {
-    let v = new Validator(['Cardiff West', '30000', 'L'])
+test.only('validate returns only valid data if first element of results is not az string', () => {
+    let v = new Validator({
+        '2345':
+            {
+                'Labour Party': '10.00', 'UKIP': '10.00',
+                'Liberal Democrats': '70.00', 'Conservative Party': '10.00'
+            }, 'Islington South & Finsbury': { 'Independent': '20.00', 'Green Party': '80.00' }
+    })
 
-    expect(v.validate()).toBe(true)
+    expect(v.validate()).toEqual({
+         'Islington South & Finsbury': { 'Independent': '20.00', 'Green Party': '80.00' }
+    })
 })
 
-test('validates true if first element of results contains &', () => {
-    let v = new Validator(['Highbury & Islington', '30000', 'L'])
+test.only('validate returns only valid data if first element of results is a party abbriev', () => {
+    let v = new Validator({
+        'L':
+            {
+                'Labour Party': '10.00', 'UKIP': '10.00',
+                'Liberal Democrats': '70.00', 'Conservative Party': '10.00'
+            }, 'Islington South & Finsbury': { 'Independent': '20.00', 'Green Party': '80.00' }
+    })
 
-    expect(v.validate()).toBe(true)
+    expect(v.validate()).toEqual({
+         'Islington South & Finsbury': { 'Independent': '20.00', 'Green Party': '80.00' }
+    })
 })
 
-test('validates false if first element of results is a party abbriev', () => {
-    let v = new Validator(['L'])
+test.only('validate returns only valid data if a party abbriev is unknown', () => {
+    let v = new Validator({
+        'Cardiff West':
+            {
+                'Labour Party': '10.00', 'UKIP': '10.00',
+                'Liberal Democrats': '70.00', 'Conservative Party': '10.00'
+            }, 'Islington South & Finsbury': { 'Not A Party': '20.00', 'Green Party': '80.00' }
+    })
 
-    expect(v.validate()).toBe(false)
+    expect(v.validate()).toEqual({
+         'Islington South & Finsbury': { 'Independent': '20.00', 'Green Party': '80.00' }
+    })
 })
+
 
 test('validates false if party abbriev is not known', () => {
     let v = new Validator(['Highbury & Islington', '200', '  J'])

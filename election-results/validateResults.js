@@ -14,25 +14,27 @@ const types = {
 
 class Validator { 
 
-    constructor(line, errorFilePath='./errorLogs.txt') {
-        this.line = line
+    constructor(data, errorFilePath='./errorLogs.txt') {
+        this.data = data
         this.errorFilePath = errorFilePath
     }
 
     writeError(errorMsg) {
-        fs.appendFileSync(this.errorFilePath, errorMsg + ' from line beginning with ' + this.line[0] + '\n', { flag: 'a+' })
+        fs.appendFileSync(this.errorFilePath, errorMsg, { flag: 'a+' })
     }
 
     validate() {
-        let constituencyName = this.line[0]
-        if (!this.validateConstituencyName(constituencyName)) return false
-        let array = this.line.slice()
-        array.shift()
-        for (let i=0; i < array.length; i+=2) {
-            if (!this.validateNumberOfVotes(array[i])) return false
-            if (!this.validatePartyAbbriev(array[i+1])) return false
-        }
-        return true
+        Object.keys(this.data).map((key) => {
+            let constituencyName = key
+            if (!this.validateConstituencyName(constituencyName)) delete this.data[key]
+            return this.data
+            Object.keys(this.data[key]).map((party) => {
+                if ((!this.validatePartyAbbriev(party) || (!this.validateNumberOfVotes(this.data[key][party])))) {
+                    delete this.data[key]
+                }
+            })
+        })
+        return this.data
     }
 
     validateNumberOfVotes(num) {

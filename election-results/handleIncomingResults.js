@@ -1,5 +1,6 @@
 const fs = require('fs')
 const Validator = require('./validateResults')
+const deepMerge = require('deepmerge')
 
 const partiesAbbrievs = {
     'L': 'Labour Party',
@@ -10,63 +11,79 @@ const partiesAbbrievs = {
     'Ind': 'Independent'
 }
 
-function formatResults(electionResults) {
-    let returnString = ''
+function createAndOutputFormattedResults(original, override) {
+    return createReturnString(addPercentagesIfValid(combineData(original, override)))
+}
+
+function combineData(original, override) {
+    return deepMerge(convertOriginalTextToObject(original), convertOriginalTextToObject(override))
+}
+
+function convertOriginalTextToObject(electionResults) {
     resultsLines = electionResults.split('\n')
-    for (resultsLine of resultsLines) {
+    let resultsLinesObj = {}
+    resultsLines.map((resultsLine) => {
         if (resultsLine.length > 0) { 
-            returnString += formatLine(resultsLine)
+            Object.assign(resultsLinesObj, formatLine(resultsLine))
         }
-    }
-    return returnString.substr(0, returnString.length -1)
+    })
+    return resultsLinesObj
 }
 
 function formatLine(electionResults) {
     resultsArray = electionResults.split(',')
-    if (new Validator(resultsArray).validate()) {
-      let constituencyName = resultsArray.shift()
-      let results = partiesAndPercentages(resultsArray)
-      return constituencyName + '\n' + partiesAndPercentages(resultsArray)
-    } else {
-      return ''
-    }
+    return { [resultsArray.shift()]: cleanUpPartiesAndVotes(resultsArray )}   
 }
 
-function partiesAndPercentages(rawResults) {
-    let results = cleanUpData(rawResults)
-    let totalVotes = results.reduce((a,b) => ({ votes: a.votes + b.votes })).votes
-    let string = ''
-    for (result of results) { 
-        string += createLine(result, totalVotes)  + '%\n' 
-    }
-    return string
+function cleanUpPartiesAndVotes(rawResults) {
+    let newResults = {}
+    rawResults.map((item, index) => { 
+        if (index % 2 !== 0) return
+        newResults[partiesAbbrievs[(rawResults[index + 1]).trim()]] = parseInt(item)
+    })
+    return newResults
 }
 
-function cleanUpData(rawResults) {
-    let results = []
-    for (let i = 0; i < rawResults.length - 1; i += 2) {
-        let partyResults = {} 
-        partyResults['party'] = getPartyName(rawResults[i + 1]) 
-        partyResults['votes'] = parseInt(rawResults[i])
-        results.push(partyResults)
-    }
-    return results
+function addPercentagesIfValid(data) {
+    let validData = new Validator(data).validate()
+    Object.keys(validData).map((key) => {
+        var totalVotes = Object.values(validData[key]).reduce((a,b) => a + b)
+        Object.keys(validData[key]).map((prop) => {
+            validData[key][prop] = ((validData[key][prop] / totalVotes) * 100).toFixed(2)            
+        })
+    })
+    return data
 }
 
-function getPartyName(abbriev) {
-    return partiesAbbrievs[abbriev.trim()]
-}
-
-function createLine(partyResults, totalVotes) {
-    return partyResults.party + ': ' + (partyResults.votes / totalVotes * 100).toFixed(2)
-}
-
-const types = {
-    constituencyName: /^[a-zA-Z& ]+$/ 
+function createReturnString(data) {
+    let returnString = ''
+    Object.keys(data).map((key) => {
+        returnString += key + '\n' + 
+                    Object.keys(data[key]).map((prop) => {
+                        return `${prop}: ${data[key][prop]}%` 
+                    }).join('\n') + 
+                    '\n'
+    })
+    return returnString
 }
 
 
-module.exports = { formatResults: formatResults,
-                   getPartyName: getPartyName,
-                   partiesAndPercentages: partiesAndPercentages
+
+
+
+
+
+
+
+
+
+
+
+
+
+module.exports = { 
+                   combineData,
+                   addPercentagesIfValid,
+                   createAndOutputFormattedResults,
+                   createReturnString
                 }
