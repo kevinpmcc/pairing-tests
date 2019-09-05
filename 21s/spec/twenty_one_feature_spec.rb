@@ -22,15 +22,15 @@
 # - players
 #
 describe 'twenty_one' do 
-  xit 'with an unshuffled deck can give each player two cards and check if either player has blackjack' do
+  it 'with an unshuffled deck can give each player two cards and check if either player has blackjack' do
     player = Player.new('Sam')
     dealer = Player.new('Dealer')
     deck = Deck.new
     table = Table.new(deck, player, dealer)
 
     table.start_game
-    expect(table.player.hand_score).to eq 5
-    expect(table..dealer_hand_score).to eq 9
-    expect(table.any_black_jacks?).to eq false
+    expect(table.player_hand_score).to eq 5
+    expect(table.dealer_hand_score).to eq 9
+    expect(table.any_blackjacks?).to eq false
   end
 end
